@@ -1,0 +1,29 @@
+{
+  "name": "youtube",
+  "author": "Tomas Novas",
+  "url": "https://github.com/tnovas/youtube",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tnovas/youtube"
+  },
+  "email": "tnovas@gmail.com",
+  "version": "1.0.0",
+  "description": "This module use Youtube Data API V3 https://developers.google.com/youtube/v3/guides",
+  "main": "app.js",
+  "scripts": {
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha tests/app.js",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
+  },
+  "devDependencies": {
+    "axios-mock-adapter": "^1.9.0",
+    "chai": "^4.1.2",
+    "coveralls": "^2.13.1",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.5.3",
+    "nock": "^9.0.14"
+  },
+  "dependencies": {
+    "axios": "^0.16.2",
+    "request": "^2.82.0"
+  }
+}

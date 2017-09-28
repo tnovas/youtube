@@ -32,19 +32,18 @@ describe('youtube', function() {
 
 	it('constructor() should make credentials with params', function() {
 		var credentials = {
-			clientId: "clientId",
-			clientSecret: "clientSecret",
-			redirectUrl: "redirectUrl",
 			key: "key",
-			scopes: "https://www.googleapis.com/auth/youtube.force-ssl,https://www.googleapis.com/auth/youtube,https://www.googleapis.com/auth/youtube.readonly,https://www.googleapis.com/auth/youtube.upload,https://www.googleapis.com/auth/youtubepartner-channel-audit",
-			channelId: "channelId",
-			accessToken: '',
-			refreshToken: '',
-			
+			channelId: "channelId"
+		};
+
+		var urls = {
+			base: 'https://www.googleapis.com/youtube/v3/',
+			channels: 'channels',
+			streams: 'liveStreams'
 		};
 		
 		expect(JSON.stringify(youtube.__credentials)).to.equal(JSON.stringify(credentials));
-		expect(JSON.stringify(youtube.__urlApi)).to.equal(JSON.stringify(urlApi));
+		expect(JSON.stringify(youtube.__urlApi)).to.equal(JSON.stringify(urls));
 	});
 
 	it('authorizationUrl() should return Url of authorization', function() {
@@ -52,7 +51,7 @@ describe('youtube', function() {
 	});
 
 	it('connect() should connect to youtube and get accessToken with code', function() {	
-		mock.onPost(`${urlApi.baseAuth}${urlApi.accessTokenPath}`).reply(200, {access_token: 'token'});
+		mock.onPost(`${urlApi.baseAuth}${urlApi.accessTokenPath}`).replyOnce(200, {access_token: 'token'});
 
 		youtube.connect('code', () => { expect('token').to.equal(youtube.__credentials.accessToken); }, (err) => {console.log(err)});
 	});
@@ -70,7 +69,7 @@ describe('youtube', function() {
 		        }
 	        ];
 
-		mock.onGet(`${urlApi.base}${urlApi.channels}`).reply(200, items);
+		mock.onGet(`${urlApi.base}${urlApi.channels}`).replyOnce(200, items);
 
 		youtube.getChannel((result) => { expect(JSON.stringify(items[0])).to.equal(JSON.stringify(result.data[0])); }, (err) => {console.log(err)});
 	});

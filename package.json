@@ -7,7 +7,7 @@
     "url": "https://github.com/tnovas/youtube"
   },
   "email": "tnovas@gmail.com",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This module use Youtube Data API V3 https://developers.google.com/youtube/v3/guides",
   "main": "app.js",
   "scripts": {
@@ -19,11 +19,11 @@
     "chai": "^4.1.2",
     "coveralls": "^2.13.1",
     "istanbul": "^0.4.5",
-    "mocha": "^3.5.3",
-    "nock": "^9.0.14"
+    "mocha": "^3.5.3"
   },
   "dependencies": {
     "axios": "^0.16.2",
+    "oauth20": "^1.0.3",
     "request": "^2.82.0"
   }
 }

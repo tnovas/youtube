@@ -77,14 +77,12 @@ describe('youtube', function() {
 	it('getCredentials() should get credentials', function() {
 		var credentials = {
 			accessToken: 'token',
-			refreshToken: 'token',
-			channelId: 'channelId'
+			refreshToken: 'token'
 		};
 
 		youtube.__credentials = {
 			accessToken: 'token',
-			refreshToken: 'token',
-			channelId: 'channelId'	
+			refreshToken: 'token'	
 		};
 
 		var result = youtube.getCredentials();

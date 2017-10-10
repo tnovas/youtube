@@ -1,49 +1,101 @@
-let request = require('axios');
-let oAuth2 = require('oauth20');
+let axios = require('axios');
+let OAuth2 = require('oauth20');
+let get = symbol('get');
+let put = symbol('put');
+let credentials = symbol('credentialsYT');
+let urls = symbol('urlsYT');
 
-class Youtube extends oAuth2 {
-	constructor(clientId, clientSecret, redirectUrl, key, scopes, channelId, accessToken='', refreshToken='') {
+class Youtube extends OAuth2 {
+	constructor(clientId, clientSecret, redirectUrl, key, scopes, accessToken='', refreshToken='') {
 		super(clientId, clientSecret, redirectUrl, scopes, 'https://accounts.google.com/o/oauth2/', 'auth', 'token');
 
-		this.__credentials = {
+		this[credentials] = {
 			key: key,
-			channelId: channelId
+			chatId: chatId,
+			liveId: liveId
 		};
 		
-		this.__urlApi = {
-			base: 'https://www.googleapis.com/youtube/v3/',
+		this[urls] = {
 			channels: 'channels',
-			streams: 'liveStreams'
+			streams: 'liveStreams',
+			chats: 'liveChat/messages',
+			broadcasts: 'liveBroadcasts'
 		};
+
+		axios.default.baseURL = 'https://www.googleapis.com/youtube/v3/';
 	}
 
-	getCredentials() {
-		let credentials = super.getCredentials();
-		credentials.channelId = this.__credentials.channelId;
-
-		return credentials;
-	}
-
-	getChannel(success, error) {
-		let url = `${this.__urlApi.base}${this.__urlApi.channels}`;
-		let qs = {
+	getChannel() {
+		let url = `${this[urls].channels}`;
+		let params = {
 			part: 'snippet,contentDetails,brandingSettings,invideoPromotion,statistics',
-			id: this.__credentials.channelId,
-			key: this.__credentials.key
+			mine: true,
+			key: this[credentials].key
 		};
 
-		this.__get(url, qs, success, error);
+		return this[get](url, params);
 	}
 
-	__get(url, qs={}, success, error) {
-		request({
+	updateChannel() {
+		let url = `${this[urls].channels}`;
+		let data = {
+			part: 'snippet,contentDetails,brandingSettings,invideoPromotion,statistics',
+			mine: true,
+			key: this[credentials].key
+		};
+
+		return this[put](url, params);
+	}
+
+	liveStreams() {
+		let url = `${this[urls].streams}`;
+		let params = {
+			part: 'id,snippet,cdn,status',
+			key: this[credentials].key,
+			liveId: this[credentials].liveId
+		};
+
+		return this[get](url, params);	
+	}
+
+	liveChat() {
+		let url = `${this[urls].chats}`;
+		let params = {
+			part: 'id,snippet,authorDetails',
+			key: this[credentials].key,
+			chatId: this[credentials].chatId
+		};
+
+		return this[get](url, params);	
+	}
+	
+	liveBroadcast() {
+		let url = `${this[urls].broadcasts}`;
+		let params = {
+			part: 'id,snippet,contentDetails,status',
+			mine: true,
+			key: this[credentials].key
+		};
+
+		return this[get](url, params);	
+	}
+
+	[get](url, params) {
+		return axios({
 		    method: 'GET',
 		    url: url,
-		    qs: qs,
-		    json: true
-		})
-		.then(success)
-	    .catch(error);
+		    params: params,
+		    headers: {Authorization: `Bearer ${super.getCredentials().accessToken}`}
+		});
+	}
+
+	[put](url, data) {
+		return axios({
+		    method: 'PUT',
+		    url: url,
+		    data: data,
+		    headers: {Authorization: `Bearer ${super.getCredentials().accessToken}`}
+		});
 	}
 }
 

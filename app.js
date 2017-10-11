@@ -1,80 +1,80 @@
 let axios = require('axios');
 let OAuth2 = require('oauth20');
-let get = symbol('get');
-let put = symbol('put');
-let credentials = symbol('credentialsYT');
-let urls = symbol('urlsYT');
+let get = Symbol('get');
+let put = Symbol('put');
+let credentialsYT = Symbol('credentialsYT');
+let urlsYT = Symbol('urlsYT');
 
 class Youtube extends OAuth2 {
-	constructor(clientId, clientSecret, redirectUrl, key, scopes, accessToken='', refreshToken='') {
+	constructor(clientId, clientSecret, redirectUrl, key, scopes) {
 		super(clientId, clientSecret, redirectUrl, scopes, 'https://accounts.google.com/o/oauth2/', 'auth', 'token');
 
-		this[credentials] = {
+		this[credentialsYT] = {
 			key: key,
-			chatId: chatId,
-			liveId: liveId
+			chatId: '',
+			liveId: ''
 		};
 		
-		this[urls] = {
+		this[urlsYT] = {
+			base: 'https://www.googleapis.com/youtube/v3/',
 			channels: 'channels',
 			streams: 'liveStreams',
 			chats: 'liveChat/messages',
 			broadcasts: 'liveBroadcasts'
 		};
 
-		axios.default.baseURL = 'https://www.googleapis.com/youtube/v3/';
+		axios = axios.create({
+		  baseURL: this[urlsYT].base
+		});
+	}
+
+	getCredentials() {
+		var credentials = super.getCredentials();
+		credentials.chatId = this[credentialsYT].chatId;
+		credentials.liveId = this[credentialsYT].liveId;
+
+		return credentials;
 	}
 
 	getChannel() {
-		let url = `${this[urls].channels}`;
+		let url = `${this[urlsYT].channels}`;
 		let params = {
 			part: 'snippet,contentDetails,brandingSettings,invideoPromotion,statistics',
 			mine: true,
-			key: this[credentials].key
+			key: this[credentialsYT].key
 		};
 
 		return this[get](url, params);
 	}
 
-	updateChannel() {
-		let url = `${this[urls].channels}`;
-		let data = {
-			part: 'snippet,contentDetails,brandingSettings,invideoPromotion,statistics',
-			mine: true,
-			key: this[credentials].key
-		};
-
-		return this[put](url, params);
-	}
-
-	liveStreams() {
-		let url = `${this[urls].streams}`;
+	liveStream() {
+		let url = `${this[urlsYT].streams}`;
 		let params = {
 			part: 'id,snippet,cdn,status',
-			key: this[credentials].key,
-			liveId: this[credentials].liveId
+			key: this[credentialsYT].key,
+			liveId: this[credentialsYT].liveId
 		};
 
 		return this[get](url, params);	
 	}
 
 	liveChat() {
-		let url = `${this[urls].chats}`;
+		let url = `${this[urlsYT].chats}`;
 		let params = {
 			part: 'id,snippet,authorDetails',
-			key: this[credentials].key,
-			chatId: this[credentials].chatId
+			key: this[credentialsYT].key,
+			chatId: this[credentialsYT].chatId
 		};
 
 		return this[get](url, params);	
 	}
 	
 	liveBroadcast() {
-		let url = `${this[urls].broadcasts}`;
+		let url = `${this[urlsYT].broadcasts}`;
 		let params = {
 			part: 'id,snippet,contentDetails,status',
 			mine: true,
-			key: this[credentials].key
+			key: this[credentialsYT].key
 		};
 
 		return this[get](url, params);	
@@ -85,7 +85,7 @@ class Youtube extends OAuth2 {
 		    method: 'GET',
 		    url: url,
 		    params: params,
-		    headers: {Authorization: `Bearer ${super.getCredentials().accessToken}`}
+		    headers: {Authorization: `Bearer ${this.getCredentials().accessToken}`}
 		});
 	}
 
@@ -94,7 +94,7 @@ class Youtube extends OAuth2 {
 		    method: 'PUT',
 		    url: url,
 		    data: data,
-		    headers: {Authorization: `Bearer ${super.getCredentials().accessToken}`}
+		    headers: {Authorization: `Bearer ${this.getCredentials().accessToken}`}
 		});
 	}
 }

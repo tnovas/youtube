@@ -8,86 +8,136 @@ var MockAdapter = require('axios-mock-adapter');
 var mock = new MockAdapter(axios);
 
 describe('youtube', function() {
-	var youtube, scope, urlApi, headers;
+	var youtube, scope, urls, credentials;
 
-	before(function() {
+	before(() => {
 	    youtube = new Youtube(
 			"clientId", 
-			"clientSecret", 
+			"secretId", 
 			"redirectUrl", 
 			"key",
-			"https://www.googleapis.com/auth/youtube.force-ssl,https://www.googleapis.com/auth/youtube,https://www.googleapis.com/auth/youtube.readonly,https://www.googleapis.com/auth/youtube.upload,https://www.googleapis.com/auth/youtubepartner-channel-audit",
-			"channelId");
+			"scopes"
+		);
 
-	    urlApi = {
-			base: 'https://www.googleapis.com/youtube/v3/',
-			baseAuth: 'https://accounts.google.com/o/oauth2/',
-			authorizate: 'auth',
-			accessTokenPath: 'token',
+	    credentials = {
+	    	clientId: "clientId", 
+			clientSecret: "clientSecret", 
+			redirectUrl: "redirectUrl", 
+			key: "key",
+			scopes: "scopes"
+	    };
+
+	    urls = {
+	    	base: 'https://www.googleapis.com/youtube/v3/',
+	    	baseAuth: 'https://accounts.google.com/o/oauth2/',
+	    	authorizate: 'auth',
+	    	token: 'token',
 			channels: 'channels',
-			streams: 'liveStreams'
+			streams: 'liveStreams',
+			chats: 'liveChat/messages',
+			broadcasts: 'liveBroadcasts'
 		};
 	  });
 
+	it('authorizationUrl() should return Url of authorization', () => 
+		expect(youtube.authorizationUrl()).to.equal(`${urls.baseAuth}${urls.authorizate}?response_type=code&client_id=${credentials.clientId}&redirect_uri=${credentials.redirectUrl}&scope=${credentials.scopes}`)
+	);
 
-	it('constructor() should make credentials with params', function() {
+	it('connect() should connect to youtube and get accessToken with code', () => {	
 		var credentials = {
-			key: "key",
-			channelId: "channelId"
-		};
-
-		var urls = {
-			base: 'https://www.googleapis.com/youtube/v3/',
-			channels: 'channels',
-			streams: 'liveStreams'
+			accessToken: 'token',
+			refreshToken: 'token',
+			expiresIn: 3600,
+			chatId: '',
+			liveId: ''
 		};
 		
-		expect(JSON.stringify(youtube.__credentials)).to.equal(JSON.stringify(credentials));
-		expect(JSON.stringify(youtube.__urlApi)).to.equal(JSON.stringify(urls));
+		mock.onPost(urls.token).replyOnce(200, {access_token: 'token', refresh_token: 'token', expires_in: 3600});
+
+		youtube.connect('code').then(() => expect(JSON.stringify(youtube.getCredentials())).to.equal(JSON.stringify(credentials)));
 	});
 
-	it('authorizationUrl() should return Url of authorization', function() {
-		expect(youtube.authorizationUrl()).to.equal(`${urlApi.baseAuth}${urlApi.authorizate}?response_type=code&client_id=${youtube.__credentials.clientId}&redirect_uri=${youtube.__credentials.redirectUrl}&scope=${youtube.__credentials.scopes}`);
+	it('connect() should throw error with a message', () => {	
+		mock.onPost(urls.token).replyOnce(500, { error: 'error' });
+
+		youtube.connect('code').catch((err) => expect(500).to.equal(err.response.status));
 	});
 
-	it('connect() should connect to youtube and get accessToken with code', function() {	
-		mock.onPost(`${urlApi.baseAuth}${urlApi.accessTokenPath}`).replyOnce(200, {access_token: 'token'});
+	it('getChannel() should get channel', () => {	
+		var response = {
+			id: 1
+		};
+		
+		mock.onGet(urls.channels).replyOnce(200, {response: {id: 1}});
 
-		youtube.connect('code', () => { expect('token').to.equal(youtube.__credentials.accessToken); }, (err) => {console.log(err)});
+		youtube.getChannel().then(() => expect(JSON.stringify(response)).to.equal(JSON.stringify(response)));
 	});
 
-	it('getChannel() should get channel by id', function() {
-		let items = [ 
-				{
-					statistics: {
-		                viewCount: "37034581",
-		                commentCount: "3508",
-		                subscriberCount: "413939",
-		                hiddenSubscriberCount: false,
-		                videoCount: "1411"
-		            }
-		        }
-	        ];
+	it('getChannel() should throw error with a message', () => {	
+		mock.onGet(urls.channels).replyOnce(500, { error: 'error' });
 
-		mock.onGet(`${urlApi.base}${urlApi.channels}`).replyOnce(200, items);
-
-		youtube.getChannel((result) => { expect(JSON.stringify(items[0])).to.equal(JSON.stringify(result.data[0])); }, (err) => {console.log(err)});
+		youtube.getChannel().catch((err) => expect(500).to.equal(err.response.status));
 	});
 
-	it('getCredentials() should get credentials', function() {
+	it('liveStreams() should get live stream', () => {	
+		var response = {
+			id: 1
+		};
+		
+		mock.onGet(urls.streams).replyOnce(200, {response: {id: 1}});
+
+		youtube.liveStream().then(() => expect(JSON.stringify(response)).to.equal(JSON.stringify(response)));
+	});
+
+	it('liveStreams() should throw error with a message', () => {	
+		mock.onGet(urls.streams).replyOnce(500, { error: 'error' });
+
+		youtube.liveStream().catch((err) => expect(500).to.equal(err.response.status));
+	});
+
+	it('liveChat() should get live chat', () => {	
+		var response = {
+			msg: "test"
+		};
+		
+		mock.onGet(urls.chats).replyOnce(200, {response: {msg: "test"}});
+
+		youtube.liveChat().then(() => expect(JSON.stringify(response)).to.equal(JSON.stringify(response)));
+	});
+
+	it('liveChat() should throw error with a message', () => {	
+		mock.onGet(urls.chats).replyOnce(500, { error: 'error' });
+
+		youtube.liveChat().catch((err) => expect(500).to.equal(err.response.status));
+	});
+
+	it('liveBroadcast() should get live stream', () => {	
+		var response = {
+			id: 1
+		};
+		
+		mock.onGet(urls.broadcasts).replyOnce(200, {response: {id: 1}});
+
+		youtube.liveBroadcast().then(() => expect(JSON.stringify(response)).to.equal(JSON.stringify(response)));
+	});
+
+	it('liveBroadcast() should throw error with a message', () => {	
+		mock.onGet(urls.broadcasts).replyOnce(500, { error: 'error' });
+
+		youtube.liveBroadcast().catch((err) => expect(500).to.equal(err.response.status));
+	});
+
+	it('getCredentials() should get credentials', () => {
 		var credentials = {
 			accessToken: 'token',
-			refreshToken: 'token'
-		};
-
-		youtube.__credentials = {
-			accessToken: 'token',
-			refreshToken: 'token'	
+			refreshToken: 'token',
+			expiresIn: 3600,
+			chatId: '',
+			liveId: ''
 		};
 
 		var result = youtube.getCredentials();
 
 		expect(JSON.stringify(result)).to.equal(JSON.stringify(credentials));
 	});
-
 });

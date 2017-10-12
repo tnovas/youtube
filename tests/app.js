@@ -63,6 +63,26 @@ describe('youtube', function() {
 		youtube.connect('code').catch((err) => expect(500).to.equal(err.response.status));
 	});
 
+	it('reconnect() should connect to youtube and get accessToken with code', () => {	
+		var credentials = {
+			accessToken: 'token',
+			refreshToken: 'token',
+			expiresIn: 3600,
+			chatId: '',
+			liveId: ''
+		};
+		
+		mock.onPost(urls.token).replyOnce(200, {access_token: 'token', refresh_token: 'token', expires_in: 3600});
+
+		youtube.reconnect('refreshToken').then(() => expect(JSON.stringify(youtube.getCredentials())).to.equal(JSON.stringify(credentials)));
+	});
+
+	it('reconnect() should throw error with a message', () => {	
+		mock.onPost(urls.token).replyOnce(500, { error: 'error' });
+
+		youtube.reconnect('refreshToken').catch((err) => expect(500).to.equal(err.response.status));
+	});
+
 	it('getChannel() should get channel', () => {	
 		var response = {
 			id: 1

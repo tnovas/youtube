@@ -8,7 +8,7 @@
   },
   "email": "tnovas@gmail.com",
   "version": "1.0.1",
-  "description": "This module use Youtube Data API V3 https://developers.google.com/youtube/v3/guides",
+  "description": "This module is a implementation of Youtube Data API V3 https://developers.google.com/youtube/v3/guides",
   "main": "app.js",
   "scripts": {
     "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha tests/app.js",

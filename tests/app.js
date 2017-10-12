@@ -1,6 +1,5 @@
 var chai = require('chai');
 var expect = chai.expect;
-var request = require('request');
 var Youtube = require('../app');
 var axios = require('axios');
 var MockAdapter = require('axios-mock-adapter');

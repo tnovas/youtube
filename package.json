@@ -25,7 +25,6 @@
   "dependencies": {
     "axios": "^0.16.2",
     "express": "^4.16.2",
-    "oauth20": "^1.0.7",
-    "request": "^2.82.0"
+    "oauth20": "^1.0.7"
   }
 }

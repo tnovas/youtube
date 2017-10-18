@@ -93,7 +93,7 @@ If you need to save credentials, you have to call `getCredentials` and you will 
   accessToken,
   refreshToken,
   expiresIn,
-  socketToken
+  chatId
 }
 ```
 

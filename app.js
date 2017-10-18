@@ -50,7 +50,7 @@ class Youtube extends OAuth2 {
 		let params = {
 			part: 'id,snippet,cdn,status',
 			key: this[credentialsYoutube].key,
-			liveId: this[credentialsYoutube].liveId
+			mine: true
 		};
 
 		return this[getYoutube](url, params);	
@@ -75,7 +75,7 @@ class Youtube extends OAuth2 {
 			key: this[credentialsYoutube].key
 		};
 
-		return this[getYoutube](url, params);	
+		return this[getYoutube](url, params).then((data) => this[credentialsYoutube].chatId = data.items[0].snippet.liveChatId);	
 	}
 
 	[getYoutube](url, params) {

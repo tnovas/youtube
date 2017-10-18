@@ -11,14 +11,14 @@ node --version
 ```
 
 ## Installation:
-Add the latest version of `youtube` to your package.json:
+Add the latest version of `youtube-streamer` to your package.json:
 ```
-npm install youtube --save
+npm install youtube-streamer --save
 ```
 
 ## Usage:
 ```js
-let youtubeApi = require('youtube');
+let youtubeApi = require('youtube-streamer');
 ```
 
 Give the credentials of the youtube to the constructor
@@ -100,7 +100,7 @@ If you need to save credentials, you have to call `getCredentials` and you will 
 ### Promises
 If you add `then` to call you will take the success of response and if you add `catch` you will take the error of response.
 ```js
-youtube.getDonations(10)
+youtube.getChannel()
 	.then((res) => console.log(res)))
 	.catch((err) => console.log(err)))
 ```

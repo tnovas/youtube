@@ -5,8 +5,8 @@ let credentialsYoutube = Symbol('credentialsYoutube');
 let urlsYoutube = Symbol('urlsYoutube');
 
 class Youtube extends OAuth2 {
-	constructor(clientId, clientSecret, redirectUrl, key, scopes) {
-		super(clientId, clientSecret, redirectUrl, scopes, 'https://accounts.google.com/o/oauth2/', 'auth', 'token');
+	constructor(clientId, clientSecret, redirectUrl, key, scopes, accessToken='') {
+		super(clientId, clientSecret, redirectUrl, scopes, accessToken, 'https://accounts.google.com/o/oauth2/', 'auth');
 
 		this[credentialsYoutube] = {
 			key: key,
@@ -75,7 +75,7 @@ class Youtube extends OAuth2 {
 			key: this[credentialsYoutube].key
 		};
 
-		return this[getYoutube](url, params).then((data) => this[credentialsYoutube].chatId = data.items[0].snippet.liveChatId);	
+		return this[getYoutube](url, params).then((result) => this[credentialsYoutube].chatId = result.data.data.items[0].snippet.liveChatId);	
 	}
 
 	[getYoutube](url, params) {

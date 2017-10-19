@@ -30,6 +30,7 @@ Give the credentials of the youtube to the constructor
 | **RedirectUrl**  | *The RedirectUrl with format 'http://yourdomain/youraction'* | **false** |
 | **Key**  | *The api key*  | **false** |
 | **Scopes**       | *They are 3 scopes: https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl* | **false** |
+| **AccessToken**  | *The access token if you have one* | **true** |
 
 ```js
 let youtube = new youtubeApi('clientId', 'clientSecret', 'http://yourdomain/youraction', 'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl');

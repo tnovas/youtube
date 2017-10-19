@@ -132,10 +132,18 @@ describe('youtube', function() {
 
 	it('liveBroadcast() should get live stream', () => {	
 		var response = {
-			id: 1
+			data: {
+				items: [
+					{
+						snippet: {
+							liveChatId: 1
+						}
+					}
+				]
+			}
 		};
 		
-		mock.onGet(urls.broadcasts).replyOnce(200, {response: {id: 1}});
+		mock.onGet(urls.broadcasts).replyOnce(200, response);
 
 		youtube.liveBroadcast().then(() => expect(JSON.stringify(response)).to.equal(JSON.stringify(response)));
 	});
@@ -151,7 +159,7 @@ describe('youtube', function() {
 			accessToken: 'token',
 			refreshToken: 'token',
 			expiresIn: 3600,
-			chatId: '',
+			chatId: 1,
 			liveId: ''
 		};
 

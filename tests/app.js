@@ -32,9 +32,9 @@ describe('youtube', function() {
 	    	authorizate: 'auth',
 	    	token: 'token',
 			channels: 'channels',
-			streams: 'liveStreams',
 			chats: 'liveChat/messages',
-			broadcasts: 'liveBroadcasts'
+			broadcasts: 'liveBroadcasts',
+			videos: 'videos'
 		};
 	  });
 
@@ -103,13 +103,13 @@ describe('youtube', function() {
 			id: 1
 		};
 		
-		mock.onGet(urls.streams).replyOnce(200, {response: {id: 1}});
+		mock.onGet(urls.videos).replyOnce(200, {response: {id: 1}});
 
 		youtube.liveStream().then(() => expect(JSON.stringify(response)).to.equal(JSON.stringify(response)));
 	});
 
 	it('liveStreams() should throw error with a message', () => {	
-		mock.onGet(urls.streams).replyOnce(500, { error: 'error' });
+		mock.onGet(urls.videos).replyOnce(500, { error: 'error' });
 
 		youtube.liveStream().catch((err) => expect(500).to.equal(err.response.status));
 	});
@@ -132,15 +132,14 @@ describe('youtube', function() {
 
 	it('liveBroadcast() should get live stream', () => {	
 		var response = {
-			data: {
 				items: [
 					{
 						snippet: {
-							liveChatId: 1
-						}
+							liveChatId: 1,
+						},
+						id: 1
 					}
 				]
-			}
 		};
 		
 		mock.onGet(urls.broadcasts).replyOnce(200, response);
@@ -160,7 +159,7 @@ describe('youtube', function() {
 			refreshToken: 'token',
 			expiresIn: 3600,
 			chatId: 1,
-			liveId: ''
+			liveId: 1
 		};
 
 		var result = youtube.getCredentials();

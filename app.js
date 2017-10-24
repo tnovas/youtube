@@ -5,23 +5,23 @@ let credentialsYoutube = Symbol('credentialsYoutube');
 let urlsYoutube = Symbol('urlsYoutube');
 
 class Youtube extends OAuth2 {
-	constructor(clientId, clientSecret, redirectUrl, key, scopes, accessToken='') {
+	constructor(clientId, clientSecret, redirectUrl, key, scopes, accessToken='', chatId='', liveId='') {
 		super(clientId, clientSecret, redirectUrl, scopes, accessToken, 'https://accounts.google.com/o/oauth2/', 'auth');
 
 		this[credentialsYoutube] = {
 			key: key,
-			chatId: '',
-			liveId: ''
+			chatId: chatId,
+			liveId: liveId
 		};
 		
 		this[urlsYoutube] = {
 			channels: 'channels',
-			streams: 'liveStreams',
 			chats: 'liveChat/messages',
-			broadcasts: 'liveBroadcasts'
+			broadcasts: 'liveBroadcasts',
+			videos: 'videos'
 		};
 
-		axios = axios.create({
+		this.axiosYoutube = axios.create({
 		  baseURL: 'https://www.googleapis.com/youtube/v3/'
 		});
 	}
@@ -46,11 +46,12 @@ class Youtube extends OAuth2 {
 	}
 
 	liveStream() {
-		let url = `${this[urlsYoutube].streams}`;
+		let url = `${this[urlsYoutube].videos}`;
 		let params = {
-			part: 'id,snippet,cdn,status',
-			key: this[credentialsYoutube].key,
-			mine: true
+			part: 'statistics',
+			id: this[credentialsYoutube].liveId,
+			mine: true,
+			key: this[credentialsYoutube].key
 		};
 
 		return this[getYoutube](url, params);	
@@ -61,7 +62,7 @@ class Youtube extends OAuth2 {
 		let params = {
 			part: 'id,snippet,authorDetails',
 			key: this[credentialsYoutube].key,
-			chatId: this[credentialsYoutube].chatId
+			liveChatId: this[credentialsYoutube].chatId
 		};
 
 		return this[getYoutube](url, params);	
@@ -70,16 +71,20 @@ class Youtube extends OAuth2 {
 	liveBroadcast() {
 		let url = `${this[urlsYoutube].broadcasts}`;
 		let params = {
-			part: 'id,snippet,contentDetails,status',
+			part: 'snippet',
+			broadcastType: 'persistent',
 			mine: true,
 			key: this[credentialsYoutube].key
 		};
 
-		return this[getYoutube](url, params).then((result) => this[credentialsYoutube].chatId = result.data.data.items[0].snippet.liveChatId);	
+		return this[getYoutube](url, params).then((result) => {
+			this[credentialsYoutube].liveId = result.data.items[0].id;
+			this[credentialsYoutube].chatId = result.data.items[0].snippet.liveChatId;	
+		});
 	}
 
 	[getYoutube](url, params) {
-		return axios({
+		return this.axiosYoutube({
 		    method: 'GET',
 		    url: url,
 		    params: params,

@@ -31,6 +31,8 @@ Give the credentials of the youtube to the constructor
 | **Key**  | *The api key*  | **false** |
 | **Scopes**       | *They are 3 scopes: https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl* | **false** |
 | **AccessToken**  | *The access token if you have one* | **true** |
+| **ChatId**  | *The chat id if you have one* | **true** |
+| **LiveId**  | *The live id if you have one* | **true** |
 
 ```js
 let youtube = new youtubeApi('clientId', 'clientSecret', 'http://yourdomain/youraction', 'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl');
@@ -72,6 +74,13 @@ For get your channel information you have to call `getChannel`
 youtube.getChannel();
 ```
 
+### Get Live Broadcast:
+For get chatId and liveId you have to call `liveBroadcast`
+
+```js
+youtube.liveBroadcast();
+```
+
 ### Get Live Stream:
 For get your live stream information you have to call `liveStream`
 
@@ -94,7 +103,8 @@ If you need to save credentials, you have to call `getCredentials` and you will 
   accessToken,
   refreshToken,
   expiresIn,
-  chatId
+  chatId,
+  liveId
 }
 ```
 

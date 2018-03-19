@@ -7,7 +7,7 @@
     "url": "https://github.com/tnovas/youtube"
   },
   "email": "tnovas@gmail.com",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "This module is a implementation of Youtube Data API V3 https://developers.google.com/youtube/v3/guides",
   "main": "app.js",
   "scripts": {

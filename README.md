@@ -88,6 +88,13 @@ For get your live stream information you have to call `liveStream`
 youtube.liveStream();
 ```
 
+### Get Viewers:
+For get live viewers you have to call `getViewers`
+
+```js
+youtube.getViewers();
+```
+
 ### Get Live Chat:
 For get live chat message you have to call `liveChat`
 
@@ -125,4 +132,5 @@ First change the `clientId` and `clientSecret` in `tests/integration.js` with yo
 - `http://localhost:8080/getChannel` return information of your [channel](#get-channel)
 - `http://localhost:8080/credentials` [get credentials](#get-credentials)
 - `http://localhost:8080/reconnect` [refresh access token](#refresh-access-token)
+- `http://localhost:8080/getViewers` [get viewers](#get-viewers)
 

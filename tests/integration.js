@@ -24,7 +24,11 @@ app.get('/getChannel', (req, res) => {
 
 app.get('/credentials', (req, res) => {
 	res.json(youtube.getCredentials());
-})
+});
+
+app.get('/getViewers', (req, res) => {
+	youtube.getViewers().then((result) => res.json(result.data)).catch((err) => res.json(err.response.data));
+});
 
 app.get('/', (req, res) => {
 	res.json(youtube.authorizationUrl());

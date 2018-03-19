@@ -1,6 +1,7 @@
 let axios = require('axios');
 let OAuth2 = require('oauth20');
 let getYoutube = Symbol('getYoutube');
+let getViewers = Symbol('getViewers');
 let credentialsYoutube = Symbol('credentialsYoutube');
 let urlsYoutube = Symbol('urlsYoutube');
 
@@ -35,7 +36,7 @@ class Youtube extends OAuth2 {
 	}
 
 	getChannel() {
-		let url = `${this[urlsYoutube].channels}`;
+		let url = this[urlsYoutube].channels;
 		let params = {
 			part: 'snippet,contentDetails,brandingSettings,invideoPromotion,statistics',
 			mine: true,
@@ -46,7 +47,7 @@ class Youtube extends OAuth2 {
 	}
 
 	liveStream() {
-		let url = `${this[urlsYoutube].videos}`;
+		let url = this[urlsYoutube].videos;
 		let params = {
 			part: 'statistics',
 			id: this[credentialsYoutube].liveId,
@@ -57,8 +58,12 @@ class Youtube extends OAuth2 {
 		return this[getYoutube](url, params);	
 	}
 
+	getViewers() {
+		return this[getViewers]();
+	}
+
 	liveChat() {
-		let url = `${this[urlsYoutube].chats}`;
+		let url = this[urlsYoutube].chats;
 		let params = {
 			part: 'id,snippet,authorDetails',
 			key: this[credentialsYoutube].key,
@@ -69,7 +74,7 @@ class Youtube extends OAuth2 {
 	}
 	
 	liveBroadcast() {
-		let url = `${this[urlsYoutube].broadcasts}`;
+		let url = this[urlsYoutube].broadcasts;
 		let params = {
 			part: 'snippet',
 			broadcastType: 'persistent',
@@ -90,6 +95,11 @@ class Youtube extends OAuth2 {
 		    params: params,
 		    headers: {Authorization: `Bearer ${this.getCredentials().accessToken}`}
 		});
+	}
+
+	[getViewers]() {
+		let url = `https://www.youtube.com/live_stats?v=${this[credentialsYoutube].liveId}`;
+		return require('axios').get(url);
 	}
 }
 

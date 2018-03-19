@@ -34,7 +34,8 @@ describe('youtube', function() {
 			channels: 'channels',
 			chats: 'liveChat/messages',
 			broadcasts: 'liveBroadcasts',
-			videos: 'videos'
+			videos: 'videos',
+			viewers: 'https://www.youtube.com/live_stats?v='
 		};
 	  });
 
@@ -151,6 +152,20 @@ describe('youtube', function() {
 		mock.onGet(urls.broadcasts).replyOnce(500, { error: 'error' });
 
 		youtube.liveBroadcast().catch((err) => expect(500).to.equal(err.response.status));
+	});
+
+	it('getViewers() should get a count of viewers', () => {	
+		var viewers = 1240;
+		
+		mock.onGet(urls.viewers).replyOnce(200, {response: viewers});
+
+		youtube.getViewers().then(() => expect(JSON.stringify(response)).to.equal(JSON.stringify(response)));
+	});
+
+	it('getViewers() should throw error with a message', () => {	
+		mock.onGet(urls.broadcasts).replyOnce(500, { error: 'error' });
+
+		youtube.getViewers().catch((err) => expect(500).to.equal(err.response.status));
 	});
 
 	it('getCredentials() should get credentials', () => {

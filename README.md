@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/tnovas/youtube.svg?branch=master)](https://travis-ci.org/tnovas/youtube)
 [![Coverage Status](https://coveralls.io/repos/github/tnovas/youtube/badge.svg)](https://coveralls.io/github/tnovas/youtube)
 
-#### This module is a implementation of Youtube Data API V3 https://developers.google.com/youtube/v3/guides
+#### This module is a implementation of Youtube Data API V3 https://developers.google.com/youtube/v3/getting-started
 
 You need nodejs version > 6x because this module was made with ES6.
 ```
@@ -30,9 +30,9 @@ Give the credentials of the youtube to the constructor
 | **RedirectUrl**  | *The RedirectUrl with format 'http://yourdomain/youraction'* | **false** |
 | **Key**  | *The api key*  | **false** |
 | **Scopes**       | *They are 3 scopes: https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl* | **false** |
-| **AccessToken**  | *The access token if you have one* | **true** |
-| **ChatId**  | *The chat id if you have one* | **true** |
-| **LiveId**  | *The live id if you have one* | **true** |
+| **AccessToken**  | *Access token* | **true** |
+| **LiveId**  | *Live Id* | **true** |
+| **ChannelId**  | *Channel Id* | **true** |
 
 ```js
 let youtube = new youtubeApi('clientId', 'clientSecret', 'http://yourdomain/youraction', 'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl');
@@ -75,17 +75,10 @@ youtube.getChannel();
 ```
 
 ### Get Live Broadcast:
-For get chatId and liveId you have to call `liveBroadcast`
+This method get the liveId
 
 ```js
 youtube.liveBroadcast();
-```
-
-### Get Live Stream:
-For get your live stream information you have to call `liveStream`
-
-```js
-youtube.liveStream();
 ```
 
 ### Get Viewers:
@@ -110,8 +103,8 @@ If you need to save credentials, you have to call `getCredentials` and you will 
   accessToken,
   refreshToken,
   expiresIn,
-  chatId,
-  liveId
+  liveId,
+  channelId
 }
 ```
 

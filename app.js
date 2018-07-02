@@ -6,19 +6,19 @@ let credentialsYoutube = Symbol('credentialsYoutube');
 let urlsYoutube = Symbol('urlsYoutube');
 
 class Youtube extends OAuth2 {
-	constructor(clientId, clientSecret, redirectUrl, key, scopes, accessToken='', chatId='', liveId='') {
+	constructor(clientId, clientSecret, redirectUrl, key, scopes, accessToken='', liveId='', channelId='') {
 		super(clientId, clientSecret, redirectUrl, scopes, accessToken, 'https://accounts.google.com/o/oauth2/', 'auth');
 
 		this[credentialsYoutube] = {
 			key: key,
-			chatId: chatId,
-			liveId: liveId
+			liveId: liveId,
+			channelId: channelId
 		};
 		
 		this[urlsYoutube] = {
 			channels: 'channels',
 			chats: 'liveChat/messages',
-			broadcasts: 'liveBroadcasts',
+			search: 'search',
 			videos: 'videos'
 		};
 
@@ -29,8 +29,8 @@ class Youtube extends OAuth2 {
 
 	getCredentials() {
 		var credentials = super.getCredentials();
-		credentials.chatId = this[credentialsYoutube].chatId;
 		credentials.liveId = this[credentialsYoutube].liveId;
+		credentials.channelId = this[credentialsYoutube].channelId;
 
 		return credentials;
 	}
@@ -43,7 +43,10 @@ class Youtube extends OAuth2 {
 			key: this[credentialsYoutube].key
 		};
 
-		return this[getYoutube](url, params);
+		return this[getYoutube](url, params).then((result) => {
+			this[credentialsYoutube].channelId = result.data.items[0].id;
+			return;
+		});
 	}
 
 	liveStream() {
@@ -67,24 +70,27 @@ class Youtube extends OAuth2 {
 		let params = {
 			part: 'id,snippet,authorDetails',
 			key: this[credentialsYoutube].key,
-			liveChatId: this[credentialsYoutube].chatId
+			liveChatId: this[credentialsYoutube].liveId
 		};
 
 		return this[getYoutube](url, params);	
 	}
 	
 	liveBroadcast() {
-		let url = this[urlsYoutube].broadcasts;
+		let url = this[urlsYoutube].search;
 		let params = {
 			part: 'snippet',
-			broadcastType: 'persistent',
-			mine: true,
+			channelId: this[credentialsYoutube].channelId,
+			eventType: 'live',
+			type: 'video',
 			key: this[credentialsYoutube].key
 		};
 
 		return this[getYoutube](url, params).then((result) => {
-			this[credentialsYoutube].liveId = result.data.items[0].id;
-			this[credentialsYoutube].chatId = result.data.items[0].snippet.liveChatId;	
+			if (result.data.items[0])  
+				this[credentialsYoutube].liveId = result.data.items[0].id.videoId;
+
+			return;
 		});
 	}
 

@@ -25,10 +25,10 @@ Give the credentials of the youtube to the constructor
 
 | Params       | Description     | Optional | 
 | --------     |:---------------| :-----:|
-| **clientId**     | *The Client Id was provided by Youtube OAuth 2.0 Client* | **false** |
-| **clientSecret** | *The Client Secret was provided by Youtube OAuth 2.0 Client* | **false** |
-| **redirectUrl**  | *TThe Redirect URL that you configured in the Youtube OAuth 2.0 Client with format 'http://youUrl/'* | **false** |
-| **key**  | *The key was provided by Youtube Api keys*  | **false** |
+| **clientId**     | *The Client Id was provided by [Youtube OAuth 2.0 Client](https://console.developers.google.com/apis/credentials)* | **false** |
+| **clientSecret** | *The Client Secret was provided by [Youtube OAuth 2.0 Client](https://console.developers.google.com/apis/credentials)* | **false** |
+| **redirectUrl**  | *The Redirect URL that you configured in the Youtube OAuth 2.0 Client with format 'http://redirectURL'* | **false** |
+| **key**  | *The key was provided by [Youtube Api Key](https://console.developers.google.com/apis/credentials)*  | **false** |
 | **scopes**       | *They are 3 scopes: https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl* | **false** |
 | **accessToken**  | *Access token* | **true** |
 | **liveId**  | *Live Id* | **true** |
@@ -38,7 +38,7 @@ Give the credentials of the youtube to the constructor
 let params = {
 	clientId: 'clientId',
 	clientSecret: 'clientSecret',
-	redirectUrl: 'http://yourdomain/youraction',
+	redirectUrl: 'http://redirectURL',
 	key: 'key',
 	scopes: 'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl'
 };

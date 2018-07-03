@@ -6,13 +6,13 @@ let credentialsYoutube = Symbol('credentialsYoutube');
 let urlsYoutube = Symbol('urlsYoutube');
 
 class Youtube extends OAuth2 {
-	constructor(clientId, clientSecret, redirectUrl, key, scopes, accessToken='', liveId='', channelId='') {
-		super(clientId, clientSecret, redirectUrl, scopes, accessToken, 'https://accounts.google.com/o/oauth2/', 'auth');
+	constructor(params) {
+		super(params.clientId, params.clientSecret, params.redirectUrl, params.scopes, params.accessToken || '', 'https://accounts.google.com/o/oauth2/', 'auth');
 
 		this[credentialsYoutube] = {
-			key: key,
-			liveId: liveId,
-			channelId: channelId
+			key: params.key,
+			liveId: params.liveId || '',
+			channelId: params.channelId || ''
 		};
 		
 		this[urlsYoutube] = {
@@ -35,7 +35,7 @@ class Youtube extends OAuth2 {
 		return credentials;
 	}
 
-	getChannel() {
+	async getChannel() {
 		let url = this[urlsYoutube].channels;
 		let params = {
 			part: 'snippet,contentDetails,brandingSettings,invideoPromotion,statistics',
@@ -43,13 +43,13 @@ class Youtube extends OAuth2 {
 			key: this[credentialsYoutube].key
 		};
 
-		return this[getYoutube](url, params).then((result) => {
-			this[credentialsYoutube].channelId = result.data.items[0].id;
-			return;
-		});
+		let result = await this[getYoutube](url, params);
+		this[credentialsYoutube].channelId = result.items[0].id;
+
+		return result;
 	}
 
-	liveStream() {
+	async liveStream() {
 		let url = this[urlsYoutube].videos;
 		let params = {
 			part: 'statistics',
@@ -58,14 +58,14 @@ class Youtube extends OAuth2 {
 			key: this[credentialsYoutube].key
 		};
 
-		return this[getYoutube](url, params);	
+		return await this[getYoutube](url, params);	
 	}
 
-	getViewers() {
-		return this[getViewers]();
+	async getViewers() {
+		return await this[getViewers]();
 	}
 
-	liveChat() {
+	async liveChat() {
 		let url = this[urlsYoutube].chats;
 		let params = {
 			part: 'id,snippet,authorDetails',
@@ -73,10 +73,10 @@ class Youtube extends OAuth2 {
 			liveChatId: this[credentialsYoutube].liveId
 		};
 
-		return this[getYoutube](url, params);	
+		return await this[getYoutube](url, params);	
 	}
 	
-	liveBroadcast() {
+	async searchChannel() {
 		let url = this[urlsYoutube].search;
 		let params = {
 			part: 'snippet',
@@ -86,26 +86,28 @@ class Youtube extends OAuth2 {
 			key: this[credentialsYoutube].key
 		};
 
-		return this[getYoutube](url, params).then((result) => {
-			if (result.data.items[0])  
-				this[credentialsYoutube].liveId = result.data.items[0].id.videoId;
+		let result = await this[getYoutube](url, params);
+		if (result.items[0])
+			this[credentialsYoutube].liveId = result.items[0].id.videoId;
 
-			return;
-		});
+		return result;
 	}
 
-	[getYoutube](url, params) {
-		return this.axiosYoutube({
+	async [getYoutube](url, params) {
+		let result = await this.axiosYoutube({
 		    method: 'GET',
 		    url: url,
 		    params: params,
 		    headers: {Authorization: `Bearer ${this.getCredentials().accessToken}`}
 		});
+
+		return result.data;
 	}
 
-	[getViewers]() {
+	async [getViewers]() {
 		let url = `https://www.youtube.com/live_stats?v=${this[credentialsYoutube].liveId}`;
-		return require('axios').get(url);
+		let result = await require('axios').get(url);
+		return result.data;
 	}
 }
 

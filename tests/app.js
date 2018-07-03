@@ -6,31 +6,28 @@ var MockAdapter = require('axios-mock-adapter');
 
 var mock = new MockAdapter(axios);
 
-describe('youtube', function() {
+describe('youtube', () => {
 	var youtube, scope, urls, credentials;
 
 	before(() => {
-	    youtube = new Youtube(
-			"clientId", 
-			"secretId", 
-			"redirectUrl", 
-			"key",
-			"scopes"
-		);
+		let params = {
+			clientId: 'clientId',
+			clientSecret: 'clientSecret',
+			redirectUrl: 'redirectUrl',
+			key: 'key',
+			scopes: 'scopes'
+		};
 
-	    credentials = {
-	    	clientId: "clientId", 
-			clientSecret: "clientSecret", 
-			redirectUrl: "redirectUrl", 
-			key: "key",
-			scopes: "scopes"
-	    };
+	    youtube = new Youtube(params);
+
+	    credentials = params;
 
 	    urls = {
 	    	base: 'https://www.googleapis.com/youtube/v3/',
 	    	baseAuth: 'https://accounts.google.com/o/oauth2/',
 	    	authorizate: 'auth',
 	    	token: 'token',
+	    	search: 'search',
 			channels: 'channels',
 			chats: 'liveChat/messages',
 			broadcasts: 'liveBroadcasts',
@@ -43,24 +40,19 @@ describe('youtube', function() {
 		expect(youtube.authorizationUrl()).to.equal(`${urls.baseAuth}${urls.authorizate}?response_type=code&client_id=${credentials.clientId}&redirect_uri=${credentials.redirectUrl}&scope=${credentials.scopes}`)
 	);
 
-	it('connect() should connect to youtube and get accessToken with code', () => {	
+	it('connect() should connect to youtube and get accessToken with code', async () => {	
 		var credentials = {
 			accessToken: 'token',
 			refreshToken: 'token',
 			expiresIn: 3600,
-			chatId: '',
-			liveId: ''
+			liveId: '',
+			channelId: ''
 		};
 		
 		mock.onPost(urls.token).replyOnce(200, {access_token: 'token', refresh_token: 'token', expires_in: 3600});
 
-		youtube.connect('code').then(() => expect(JSON.stringify(youtube.getCredentials())).to.equal(JSON.stringify(credentials)));
-	});
-
-	it('connect() should throw error with a message', () => {	
-		mock.onPost(urls.token).replyOnce(500, { error: 'error' });
-
-		youtube.connect('code').catch((err) => expect(500).to.equal(err.response.status));
+		await youtube.connect('code');
+		expect(JSON.stringify(youtube.getCredentials())).to.equal(JSON.stringify(credentials));
 	});
 
 	it('reconnect() should connect to youtube and get accessToken with code', () => {	
@@ -68,8 +60,8 @@ describe('youtube', function() {
 			accessToken: 'token',
 			refreshToken: 'token',
 			expiresIn: 3600,
-			chatId: '',
-			liveId: ''
+			liveId: '',
+			channelId: ''
 		};
 		
 		mock.onPost(urls.token).replyOnce(200, {access_token: 'token', refresh_token: 'token', expires_in: 3600});
@@ -77,95 +69,80 @@ describe('youtube', function() {
 		youtube.reconnect('refreshToken').then(() => expect(JSON.stringify(youtube.getCredentials())).to.equal(JSON.stringify(credentials)));
 	});
 
-	it('reconnect() should throw error with a message', () => {	
-		mock.onPost(urls.token).replyOnce(500, { error: 'error' });
+	it('getChannel() should get channel', async () => {	
+		let response = {
+			items: [{
+				id: 1
+			}]
+		};
 
-		youtube.reconnect('refreshToken').catch((err) => expect(500).to.equal(err.response.status));
+		mock.onGet(urls.channels).replyOnce(200, response);
+
+		let result = await youtube.getChannel();
+
+		expect(JSON.stringify(response)).to.equal(JSON.stringify(result))
 	});
 
-	it('getChannel() should get channel', () => {	
+	it('liveStreams() should get live stream', async () => {	
 		var response = {
 			id: 1
 		};
 		
-		mock.onGet(urls.channels).replyOnce(200, {response: {id: 1}});
+		mock.onGet(urls.videos).replyOnce(200, response);
 
-		youtube.getChannel().then(() => expect(JSON.stringify(response)).to.equal(JSON.stringify(response)));
+		let result = await youtube.liveStream();
+
+		expect(JSON.stringify(response)).to.equal(JSON.stringify(result));
 	});
 
-	it('getChannel() should throw error with a message', () => {	
-		mock.onGet(urls.channels).replyOnce(500, { error: 'error' });
-
-		youtube.getChannel().catch((err) => expect(500).to.equal(err.response.status));
-	});
-
-	it('liveStreams() should get live stream', () => {	
-		var response = {
-			id: 1
-		};
-		
-		mock.onGet(urls.videos).replyOnce(200, {response: {id: 1}});
-
-		youtube.liveStream().then(() => expect(JSON.stringify(response)).to.equal(JSON.stringify(response)));
-	});
-
-	it('liveStreams() should throw error with a message', () => {	
-		mock.onGet(urls.videos).replyOnce(500, { error: 'error' });
-
-		youtube.liveStream().catch((err) => expect(500).to.equal(err.response.status));
-	});
-
-	it('liveChat() should get live chat', () => {	
+	it('liveChat() should get live chat', async () => {	
 		var response = {
 			msg: "test"
 		};
 		
-		mock.onGet(urls.chats).replyOnce(200, {response: {msg: "test"}});
+		mock.onGet(urls.chats).replyOnce(200, response);
 
-		youtube.liveChat().then(() => expect(JSON.stringify(response)).to.equal(JSON.stringify(response)));
+		let result = await youtube.liveChat();
+
+		expect(JSON.stringify(response)).to.equal(JSON.stringify(result))
 	});
 
-	it('liveChat() should throw error with a message', () => {	
-		mock.onGet(urls.chats).replyOnce(500, { error: 'error' });
+	it('getViewers() should get a count of viewers', async () => {	
+		var response = 1240;
+		
+		mock.onGet(urls.viewers).replyOnce(200, response);
 
-		youtube.liveChat().catch((err) => expect(500).to.equal(err.response.status));
+		let result = await youtube.getViewers();
+
+		expect(JSON.stringify(response)).to.equal(JSON.stringify(result));
 	});
 
-	it('liveBroadcast() should get live stream', () => {	
-		var response = {
-				items: [
-					{
-						snippet: {
-							liveChatId: 1,
-						},
-						id: 1
-					}
-				]
+	it('searchChannel() should get a live Id', async () => {	
+		let response = {
+			items: [{
+				id: {
+					videoId: 1
+				}
+			}]
 		};
 		
-		mock.onGet(urls.broadcasts).replyOnce(200, response);
+		mock.onGet(urls.search).replyOnce(200, response);
 
-		youtube.liveBroadcast().then(() => expect(JSON.stringify(response)).to.equal(JSON.stringify(response)));
+		let result = await youtube.searchChannel();
+
+		expect(JSON.stringify(response)).to.equal(JSON.stringify(result));
 	});
 
-	it('liveBroadcast() should throw error with a message', () => {	
-		mock.onGet(urls.broadcasts).replyOnce(500, { error: 'error' });
-
-		youtube.liveBroadcast().catch((err) => expect(500).to.equal(err.response.status));
-	});
-
-	it('getViewers() should get a count of viewers', () => {	
-		var viewers = 1240;
+	it('searchChannel() the result is empty', async () => {	
+		let response = {
+			items: []
+		};
 		
-		mock.onGet(urls.viewers).replyOnce(200, {response: viewers});
+		mock.onGet(urls.search).replyOnce(200, response);
 
-		youtube.getViewers().then(() => expect(JSON.stringify(response)).to.equal(JSON.stringify(response)));
-	});
+		let result = await youtube.searchChannel();
 
-	it('getViewers() should throw error with a message', () => {	
-		mock.onGet(urls.broadcasts).replyOnce(500, { error: 'error' });
-
-		youtube.getViewers().catch((err) => expect(500).to.equal(err.response.status));
+		expect(JSON.stringify(response)).to.equal(JSON.stringify(result));
 	});
 
 	it('getCredentials() should get credentials', () => {
@@ -173,8 +150,8 @@ describe('youtube', function() {
 			accessToken: 'token',
 			refreshToken: 'token',
 			expiresIn: 3600,
-			chatId: 1,
-			liveId: 1
+			liveId: 1,
+			channelId: 1
 		};
 
 		var result = youtube.getCredentials();

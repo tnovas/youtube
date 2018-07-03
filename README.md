@@ -5,7 +5,7 @@
 
 #### This module is a implementation of Youtube Data API V3 https://developers.google.com/youtube/v3/getting-started
 
-You need nodejs version > 6x because this module was made with ES6.
+You need nodejs version > 7.6 because this module was made with ES6 and use Async - Await.
 ```
 node --version
 ```
@@ -25,17 +25,25 @@ Give the credentials of the youtube to the constructor
 
 | Params       | Description     | Optional | 
 | --------     |:---------------| :-----:|
-| **ClientId**     | *The Client Id* | **false** |
-| **ClientSecret** | *The Client Secret* | **false** |
-| **RedirectUrl**  | *The RedirectUrl with format 'http://yourdomain/youraction'* | **false** |
-| **Key**  | *The api key*  | **false** |
-| **Scopes**       | *They are 3 scopes: https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl* | **false** |
-| **AccessToken**  | *Access token* | **true** |
-| **LiveId**  | *Live Id* | **true** |
-| **ChannelId**  | *Channel Id* | **true** |
+| **clientId**     | *The Client Id was provided by Youtube OAuth 2.0 Client* | **false** |
+| **clientSecret** | *The Client Secret was provided by Youtube OAuth 2.0 Client* | **false** |
+| **redirectUrl**  | *TThe Redirect URL that you configured in the Youtube OAuth 2.0 Client with format 'http://youUrl/'* | **false** |
+| **key**  | *The key was provided by Youtube Api keys*  | **false** |
+| **scopes**       | *They are 3 scopes: https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl* | **false** |
+| **accessToken**  | *Access token* | **true** |
+| **liveId**  | *Live Id* | **true** |
+| **channelId**  | *Channel Id* | **true** |
 
 ```js
-let youtube = new youtubeApi('clientId', 'clientSecret', 'http://yourdomain/youraction', 'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl');
+let params = {
+	clientId: 'clientId',
+	clientSecret: 'clientSecret',
+	redirectUrl: 'http://yourdomain/youraction',
+	key: 'key',
+	scopes: 'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl'
+};
+
+let youtube = new youtubeApi(params);
 ```
 
 ### Authorization
@@ -71,34 +79,39 @@ youtube.reconnect(refreshToken);
 For get your channel information you have to call `getChannel`
 
 ```js
-youtube.getChannel();
+let channel = await youtube.getChannel();
 ```
 
-### Get Live Broadcast:
-This method get the liveId
+### Search Channel:
+For get any channel or if you need a liveId you have to call `searchChannel`
 
 ```js
-youtube.liveBroadcast();
+let channel = await youtube.searchChannel();
 ```
 
 ### Get Viewers:
 For get live viewers you have to call `getViewers`
 
 ```js
-youtube.getViewers();
+let viewers = await youtube.getViewers();
 ```
 
 ### Get Live Chat:
 For get live chat message you have to call `liveChat`
 
 ```js
-youtube.liveChat();
+let chats = await youtube.liveChat();
 ```
 
 ### Get Credentials:
-If you need to save credentials, you have to call `getCredentials` and you will get an object
+All credentials you need in this api saved automatically, if you need any of these credentials call `getCredentials` and you will get an object
 
 ```js
+let credentials = youtube.getCredentials();
+```
+
+```js
+Response:
 {
   accessToken,
   refreshToken,
@@ -108,15 +121,17 @@ If you need to save credentials, you have to call `getCredentials` and you will 
 }
 ```
 
-### Promises
-If you add `then` to call you will take the success of response and if you add `catch` you will take the error of response.
+### Async Await
+If you add `await` to a call, the thread waits for the response. Remember the method that makes the `await method ()` call must have the `async` declared
 ```js
-youtube.getChannel()
-	.then((res) => console.log(res)))
-	.catch((err) => console.log(err)))
+async myMethod() {
+	let channel = await youtube.getChannel();
+
+	return channel;	
+}
 ```
 
-## Test Integration:
+## Integration Test:
 You can test the module with your productive credentials. 
 First change the `clientId` and `clientSecret` in `tests/integration.js` with yours credentials, open a console and run `npm start`, open browser and type `http://localhost:8080/`
 

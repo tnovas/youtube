@@ -1,7 +1,7 @@
 # Youtube
 
-[![Build Status](https://travis-ci.org/tnovas/youtube.svg?branch=master)](https://travis-ci.org/tnovas/youtube)
-[![Coverage Status](https://coveralls.io/repos/github/tnovas/youtube/badge.svg)](https://coveralls.io/github/tnovas/youtube)
+[![Build Status](https://travis-ci.org/tnovas/youtube.svg?branch=v2-0-0-beta)](https://travis-ci.org/tnovas/youtube?branch=v2-0-0-beta)
+[![Coverage Status](https://coveralls.io/repos/github/tnovas/youtube/badge.svg)](https://coveralls.io/github/tnovas/youtube?branch=v2-0-0-beta)
 
 #### This module is a implementation of Youtube Data API V3 https://developers.google.com/youtube/v3/getting-started
 
@@ -13,7 +13,7 @@ node --version
 ## Installation:
 Add the latest version of `youtube-streamer` to your package.json:
 ```
-npm install youtube-streamer --save
+npm install -s youtube-streamer@beta
 ```
 
 ## Usage:
@@ -130,15 +130,3 @@ async myMethod() {
 	return channel;	
 }
 ```
-
-## Integration Test:
-You can test the module with your productive credentials. 
-First change the `clientId` and `clientSecret` in `tests/integration.js` with yours credentials, open a console and run `npm start`, open browser and type `http://localhost:8080/`
-
-### Urls:
-- `http://localhost:8080/` return the url of [authorization](#authorization), copy and paste into the url of the browser
-- `http://localhost:8080/getChannel` return information of your [channel](#get-channel)
-- `http://localhost:8080/credentials` [get credentials](#get-credentials)
-- `http://localhost:8080/reconnect` [refresh access token](#refresh-access-token)
-- `http://localhost:8080/getViewers` [get viewers](#get-viewers)
-

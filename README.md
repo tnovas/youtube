@@ -1,7 +1,7 @@
 # Youtube
 
-[![Build Status](https://travis-ci.org/tnovas/youtube.svg?branch=v2-0-0-beta)](https://travis-ci.org/tnovas/youtube?branch=v2-0-0-beta)
-[![Coverage Status](https://coveralls.io/repos/github/tnovas/youtube/badge.svg)](https://coveralls.io/github/tnovas/youtube?branch=v2-0-0-beta)
+[![Build Status](https://travis-ci.org/tnovas/youtube.svg?branch=master)](https://travis-ci.org/tnovas/youtube?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/tnovas/youtube/badge.svg)](https://coveralls.io/github/tnovas/youtube?branch=master)
 
 #### This module is a implementation of Youtube Data API V3 https://developers.google.com/youtube/v3/getting-started
 
@@ -13,7 +13,7 @@ node --version
 ## Installation:
 Add the latest version of `youtube-streamer` to your package.json:
 ```
-npm install -s youtube-streamer@beta
+npm install -s youtube-streamer
 ```
 
 ## Usage:
